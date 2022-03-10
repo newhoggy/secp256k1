@@ -4,15 +4,11 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     defaults:
       run:
         shell: bash
-
-    strategy:
-      matrix:
-        os: windows-latest
 
     steps:
     - uses: actions/checkout@v1
@@ -21,8 +17,8 @@ jobs:
 
     - shell: msys2 {0}
       name: Install secp256k1 (Windows)
-      if: matrix.os == 'windows-latest'
       run: |
+        pacman -S --noconfirm autoconf autotools
         ./autogen.sh
         ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
         make
