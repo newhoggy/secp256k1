@@ -25,7 +25,7 @@ jobs:
       name: Configure secp256k1
       run: |
         ./autogen.sh
-        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental --disable-dependency-tracking
 
     - shell: msys2 {0}
       name: Build
