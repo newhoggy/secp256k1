@@ -19,13 +19,14 @@ jobs:
       name: Installing tools
       run: |
         # pacman -S --noconfirm autoconf automake base-devel gcc libtool
-        pacman -S --noconfirm autoconf automake mingw-w64-x86_64-toolchain libtool
+        pacman -S --noconfirm autoconf automake base-devel mingw-w64-x86_64-toolchain libtool
 
     - shell: msys2 {0}
       name: Configure secp256k1
       run: |
         ./autogen.sh
-        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental --disable-dependency-tracking
+        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+        # --disable-dependency-tracking
 
     - shell: msys2 {0}
       name: Build
