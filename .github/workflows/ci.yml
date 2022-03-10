@@ -16,11 +16,28 @@ jobs:
     - uses: msys2/setup-msys2@v2
 
     - shell: msys2 {0}
-      name: Install secp256k1 (Windows)
+      name: Installing tools
       run: |
-        pacman -S --noconfirm autoconf autotools
+        # pacman -S --noconfirm autoconf automake base-devel gcc libtool
+        pacman -S --noconfirm autoconf automake mingw-w64-x86_64-toolchain libtool
+
+    - shell: msys2 {0}
+      name: Configure secp256k1
+      run: |
         ./autogen.sh
         ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+
+    - shell: msys2 {0}
+      name: Build
+      run: |
         make
+
+    - shell: msys2 {0}
+      name: Test
+      run: |
         make check
+
+    - shell: msys2 {0}
+      name: Install
+      run: |
         make install
