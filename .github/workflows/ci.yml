@@ -20,39 +20,44 @@ jobs:
     - uses: actions/checkout@v1
 
     - uses: msys2/setup-msys2@v2
+      if: matrix.os == 'windows-latest'
 
     - name: Choose shell
       run: |
-        if [ ${{ matrix.os }} == windows-latest ]; then
-          echo "CI_SHELL=msys2 {0}" >> $GITHUB_ENV
-        else
-          echo "CI_SHELL=bash" >> $GITHUB_ENV
-        fi
+        mkdir -p "$HOME/.local/bin"
+        cat > "$HOME/.local/bin/cibash" <<EOF
+        #!/usr/bin/env bash
+        echo "///////"
+        echo "$@"
+        echo "///////"
+        EOF
+        chmod a+x "$HOME/.local/bin/cibash"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - shell: ${{ env.CI_SHELL }}
+    - shell: cibash
       name: Installing tools
       run: |
         # pacman -S --noconfirm autoconf automake base-devel gcc libtool
         pacman -S --noconfirm autoconf automake base-devel mingw-w64-x86_64-toolchain libtool
 
-    - shell: ${{ env.CI_SHELL }}
+    - shell: cibash
       name: Configure secp256k1
       run: |
         ./autogen.sh
         ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
         # --disable-dependency-tracking
 
-    - shell: ${{ env.CI_SHELL }}
+    - shell: cibash
       name: Build
       run: |
         make
 
-    - shell: ${{ env.CI_SHELL }}
+    - shell: cibash
       name: Test
       run: |
         make check
 
-    - shell: ${{ env.CI_SHELL }}
+    - shell: cibash
       name: Install
       run: |
         make install
